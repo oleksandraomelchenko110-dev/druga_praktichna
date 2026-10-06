@@ -153,13 +153,38 @@ PS C:\Users\my comp>
 **Команда:**
 
 ```
-<текст команди>
+$d = "iana.org"
+$c = New-Object System.Net.Sockets.TcpClient($d, 80)
+$s = $c.GetStream()
+$w = New-Object System.IO.StreamWriter($s)
+$w.Write("GET / HTTP/1.1`r`nHost: opism-pr02.invalid`r`nConnection: close`r`n`r`n")
+$w.Flush()
+(New-Object System.IO.StreamReader($s)).ReadToEnd()
+$c.Close()
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+HTTP/1.1 302 Found
+Date: Tue, 06 Oct 2026 15:18:11 GMT
+Server: Apache
+Location: https://www.iana.org/
+Cache-Control: max-age=345600
+Expires: Sat, 10 Oct 2026 15:18:11 GMT
+Content-Length: 205
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https://www.iana.org/">here</a>.</p>
+</body></html>
+
+PS C:\Users\my comp>
 ```
 
 #### A.3.3. Запит без поля `Host` у версії 1.0
@@ -167,13 +192,38 @@ PS C:\Users\my comp>
 **Команда:**
 
 ```
-<текст команди>
+$d = "iana.org"
+$c = New-Object System.Net.Sockets.TcpClient($d, 80)
+$s = $c.GetStream()
+$w = New-Object System.IO.StreamWriter($s)
+$w.Write("GET / HTTP/1.0`r`n`r`n")
+$w.Flush()
+(New-Object System.IO.StreamReader($s)).ReadToEnd()
+$c.Close()
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+HTTP/1.1 302 Found
+Date: Tue, 06 Oct 2026 15:20:48 GMT
+Server: Apache
+Location: https://www.iana.org/
+Cache-Control: max-age=345600
+Expires: Sat, 10 Oct 2026 15:20:48 GMT
+Content-Length: 205
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https://www.iana.org/">here</a>.</p>
+</body></html>
+
+PS C:\Users\my comp>
 ```
 
 Зведення результатів наведено в **Додатку Д**.
@@ -185,18 +235,59 @@ PS C:\Users\my comp>
 **Команда:**
 
 ```
-<текст команди>
+$d = "iana.org"
+$c = New-Object System.Net.Sockets.TcpClient($d, 80)
+$s = $c.GetStream()
+$w = New-Object System.IO.StreamWriter($s)
+$w.Write("GET /opism-pr02-12345 HTTP/1.1`r`nHost: $d`r`n`r`nGET / HTTP/1.1`r`nHost: $d`r`nConnection: close`r`n`r`n")
+$w.Flush()
+(New-Object System.IO.StreamReader($s)).ReadToEnd()
+$c.Close()
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+HTTP/1.1 301 Moved Permanently
+Date: Tue, 06 Oct 2026 15:28:26 GMT
+Server: Apache
+Location: https://www.iana.org/opism-pr02-12345
+Cache-Control: max-age=345600
+Expires: Sat, 10 Oct 2026 15:28:26 GMT
+Content-Length: 245
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.iana.org/opism-pr02-12345">here</a>.</p>
+</body></html>
+HTTP/1.1 301 Moved Permanently
+Date: Tue, 06 Oct 2026 15:28:26 GMT
+Server: Apache
+Location: https://www.iana.org/
+Cache-Control: max-age=345600
+Expires: Sat, 10 Oct 2026 15:28:26 GMT
+Content-Length: 229
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.iana.org/">here</a>.</p>
+</body></html>
+
+PS C:\Users\my comp>
 ```
 
-**Кількість отриманих відповідей:**
+**Кількість отриманих відповідей:** 2
 
-**Коди стану отриманих відповідей:**
+**Коди стану отриманих відповідей:** Оба 301 Moved Permanently
 
 ---
 
@@ -205,13 +296,42 @@ PS C:\Users\my comp>
 **Команда:**
 
 ```
-<текст команди>
+curl.exe -v --http1.1 http://iana.org/ -o /dev/null
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host iana.org:80 was resolved.
+* IPv6: (none)
+* IPv4: 192.0.43.8
+*   Trying 192.0.43.8:80...
+* Connected to iana.org (192.0.43.8) port 80
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: iana.org
+> User-Agent: curl/8.13.0
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/1.1 301 Moved Permanently
+< Date: Tue, 06 Oct 2026 15:34:11 GMT
+< Server: Apache
+< Location: https://www.iana.org/
+< Cache-Control: max-age=345600
+< Expires: Sat, 10 Oct 2026 15:34:11 GMT
+< Content-Length: 229
+< Content-Type: text/html; charset=iso-8859-1
+<
+{ [229 bytes data]
+Warning: Failed to open the file /dev/null: No such file or directory
+* client returned ERROR on write of 229 bytes
+  0   229    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+* closing connection #0
+curl: (23) client returned ERROR on write of 229 bytes
+PS C:\Users\my comp>
 ```
 
 ---
@@ -225,19 +345,39 @@ PS C:\Users\my comp>
 **Команда:**
 
 ```
-<текст команди>
+openssl s_client -connect iana.org:443 -servername iana.org -crlf -quiet 
 ```
 
 **Набраний запит:**
 
 ```
-<текст запиту>
+GET / HTTP/1.1
+Host: iana.org
+Connection: close
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+HTTP/1.1 400 Bad Request
+Date: Tue, 06 Oct 2026 15:39:12 GMT
+Server: Apache
+Content-Length: 347
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>400 Bad Request</title>
+</head><body>
+<h1>Bad Request</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+<p>Additionally, a 400 Bad Request
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+F8240000:error:0A000126:SSL routines::unexpected eof while reading:../openssl-3.5.2/ssl/record/rec_layer_s3.c:696:
+PS C:\Users\my comp>
 ```
 
 ---
