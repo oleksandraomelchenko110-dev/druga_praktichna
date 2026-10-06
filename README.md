@@ -25,19 +25,43 @@
 **Команда:**
 
 ```
-<текст команди>
+$d = "iana.org"
+$c = New-Object System.Net.Sockets.TcpClient($d, 80)
+$s = $c.GetStream()
+$w = New-Object System.IO.StreamWriter($s)
+$w.Write("GET / HTTP/1.1`r`nHost: $d`r`nConnection: close`r`n`r`n")
+$w.Flush()
+(New-Object System.IO.StreamReader($s)).ReadToEnd()
+$c.Close()
 ```
 
 **Набраний запит:**
 
+Запит у PowerShell формується у змінній та виглядає так:
 ```
-<текст запиту, набраний з клавіатури, включно з порожнім рядком>
+$w.Write("GET / HTTP/1.1`r`nHost: $d`r`nConnection: close`r`n`r`n")
 ```
 
 **Відповідь:**
 
 ```
-<повний текст відповіді>
+HTTP/1.1 301 Moved Permanently
+Date: Tue, 06 Oct 2026 14:54:54 GMT
+Server: Apache
+Location: https://www.iana.org/
+Cache-Control: max-age=345600
+Expires: Sat, 10 Oct 2026 14:54:54 GMT
+Content-Length: 229
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.iana.org/">here</a>.</p>
+</body></html>
 ```
 
 ---
@@ -47,13 +71,38 @@
 **Команда:**
 
 ```
-<текст команди>
+$d = "iana.org"
+$c = New-Object System.Net.Sockets.TcpClient($d, 80)
+$s = $c.GetStream()
+$w = New-Object System.IO.StreamWriter($s)
+$w.Write("GET / HTTP/1.1`r`nConnection: close`r`n`r`n")
+$w.Flush()
+(New-Object System.IO.StreamReader($s)).ReadToEnd()
+$c.Close()
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+HTTP/1.1 400 Bad Request
+Date: Tue, 06 Oct 2026 15:14:07 GMT
+Server: Apache
+Content-Length: 347
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>400 Bad Request</title>
+</head><body>
+<h1>Bad Request</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+<p>Additionally, a 400 Bad Request
+error was encountered while trying to use an ErrorDocument to handle the request.</p>
+</body></html>
+
+PS C:\Users\my comp>
 ```
 
 ---
@@ -65,13 +114,38 @@
 **Команда:**
 
 ```
-<текст команди>
+$d = "iana.org"
+$c = New-Object System.Net.Sockets.TcpClient($d, 80)
+$s = $c.GetStream()
+$w = New-Object System.IO.StreamWriter($s)
+$w.Write("GET / HTTP/1.1`r`nHost: w3.org`r`nConnection: close`r`n`r`n")
+$w.Flush()
+(New-Object System.IO.StreamReader($s)).ReadToEnd()
+$c.Close()
 ```
 
 **Вивід:**
 
 ```
-<повний вивід>
+HTTP/1.1 302 Found
+Date: Tue, 06 Oct 2026 15:15:48 GMT
+Server: Apache
+Location: https://www.iana.org/
+Cache-Control: max-age=345600
+Expires: Sat, 10 Oct 2026 15:15:48 GMT
+Content-Length: 205
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https://www.iana.org/">here</a>.</p>
+</body></html>
+
+PS C:\Users\my comp>
 ```
 
 #### A.3.2. Неіснуюче ім'я в полі `Host`
